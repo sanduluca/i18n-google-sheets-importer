@@ -16,7 +16,7 @@ Create a Google Sheet spreadsheet in the following format:
 
 <img width="462" alt="Screen Shot 2019-12-20 at 00 56 23" src="https://user-images.githubusercontent.com/9952229/71218899-927f3a00-22c3-11ea-962b-2e8e53199579.png">
 
-Generate `credentials.json` file to access the Google Sheets API by following Step 1 from [this guide](https://developers.google.com/sheets/api/quickstart/nodejs).
+Generate `credentials.json` file to access the Google Sheets API by following Step 1 from [this guide](https://developers.google.com/sheets/api/quickstart/nodejs). Or you can create an API key following [this quide](https://cloud.google.com/docs/authentication/api-keys?hl=en&visit_id=638784454066444186-4176495997&rd=1#create)
 
 Run the following command from the folder where `credentials.json` file is located:
 
@@ -48,6 +48,7 @@ i18n-google-sheets-importer import-google-sheet
   [--sheetName Sheet1]
   [--credentials credentials.json]
   [--token token.json]
+  [--apiKey YOUR_KEY]
 ```
 
 Generates JSON translation files from a Google Sheet spreadsheet.
@@ -59,6 +60,7 @@ Arguments:
 - `sheetName` (default: `Sheet1`) - Name of the sheet which contains i18n data
 - `credentials` (default: `./credentials.json`) - Path to file with Google Sheets Node API credentials
 - `token` (default: `./token.json`) - Path to a Google Sheets API token (it will get generated on the first run and it can be reused afterwards)
+- `apiKey` (Alternative to credentials) - With an API key, you can access your service from a client or the server. Typically less secure.
 
 ### `export-csv`
 

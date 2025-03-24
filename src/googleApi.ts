@@ -14,10 +14,10 @@ interface GoogleAPICredentials {
   };
 }
 
-type GoogleAPICallback = (auth: OAuth2Client) => void;
+type GoogleAPICallback = (auth: OAuth2Client | string) => void;
 
 export async function downloadSpreadsheet(
-  auth: OAuth2Client,
+  auth: OAuth2Client | string,
   spreadsheetId: string,
   sheetName: string
 ) {
@@ -28,7 +28,16 @@ export async function downloadSpreadsheet(
   });
 }
 
-export function initGoogleAPI(credentialsPath: string, tokenPath: string, callback: GoogleAPICallback) {
+export function initGoogleAPI(
+  credentialsPath: string,
+  tokenPath: string,
+  apiKey: string,
+  callback: GoogleAPICallback
+) {
+  if (apiKey) {
+    callback(apiKey);
+    return;
+  }
   const rawCredentials = fs.readFileSync(credentialsPath, 'utf8');
   const credentials = JSON.parse(rawCredentials) as GoogleAPICredentials;
   authorize(credentials, tokenPath, callback);
@@ -56,7 +65,11 @@ function authorize(
   });
 }
 
-function getNewToken(tokenPath: string, oAuth2Client: OAuth2Client, callback: GoogleAPICallback) {
+function getNewToken(
+  tokenPath: string,
+  oAuth2Client: OAuth2Client,
+  callback: GoogleAPICallback
+) {
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: 'offline',
     scope: SCOPES,
@@ -67,7 +80,7 @@ function getNewToken(tokenPath: string, oAuth2Client: OAuth2Client, callback: Go
     input: process.stdin,
     output: process.stdout,
   });
-  rl.question('Enter the code from that page here: ', code => {
+  rl.question('Enter the code from that page here: ', (code) => {
     rl.close();
     oAuth2Client.getToken(code, (err, token) => {
       if (err || !token) {
@@ -78,7 +91,7 @@ function getNewToken(tokenPath: string, oAuth2Client: OAuth2Client, callback: Go
       }
       oAuth2Client.setCredentials(token);
       // Store the token to disk for later program executions
-      fs.writeFile(tokenPath, JSON.stringify(token), error => {
+      fs.writeFile(tokenPath, JSON.stringify(token), (error) => {
         if (error) {
           return console.error(error);
         }

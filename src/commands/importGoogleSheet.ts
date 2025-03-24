@@ -31,16 +31,25 @@ const command: CommandModule<{}, ImportGoogleSheetsArgs> = {
       description:
         'File with Google API token. If it has not been generated yet, the script will create it',
     },
+    apiKey: {
+      description:
+        'With an API key, you can access your service from a client or the server. Typically less secure.',
+    },
   },
-  handler: argv => {
-    initGoogleAPI(argv.credentials, argv.token, async (auth: OAuth2Client) => {
-      const spreadsheet = await downloadSpreadsheet(
-        auth,
-        argv.spreadsheetId,
-        argv.sheetName
-      );
-      importTranslationsFromSpreadsheet(spreadsheet, argv.output);
-    });
+  handler: (argv) => {
+    initGoogleAPI(
+      argv.credentials,
+      argv.token,
+      argv.apiKey,
+      async (auth: OAuth2Client | string) => {
+        const spreadsheet = await downloadSpreadsheet(
+          auth,
+          argv.spreadsheetId,
+          argv.sheetName
+        );
+        importTranslationsFromSpreadsheet(spreadsheet, argv.output);
+      }
+    );
   },
 };
 
@@ -50,6 +59,7 @@ interface ImportGoogleSheetsArgs {
   credentials: string;
   token: string;
   output: string;
+  apiKey: string;
 }
 
 module.exports = command;
